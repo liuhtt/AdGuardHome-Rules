@@ -1,0 +1,65 @@
+name: Build-Rules
+on:
+  schedule:
+    - cron: '0 2 * * *'
+
+  workflow_dispatch:
+permissions:
+  contents: write
+  discussions: write
+jobs:
+  Upstream-DNS-servers-offload-rules:
+    runs-on: ubuntu-22.04
+    steps: 
+      - name: 将存储库签出到运行器
+        uses: actions/checkout@v3
+
+      - name: 安装依赖项
+        run: |
+          pip install -r .github/scripts/requirements.txt
+
+
+      - name: 获取上游DNS服务器分流规则
+        id: upstream_dns_servers
+        run: |
+          mkdir -p workdir
+          cd workdir
+          python .github/scripts/Upstream-DNS-servers-offload-rules.py
+      
+      - name: 上传上游DNS服务器分流规则
+        if: success() || failure()
+        uses: actions/upload-artifact@v3
+        with:
+            name: Upstream-DNS-servers-offload-rules
+            path: "workdir/AdGuardHome-dnslist(by cmzj).yaml"
+
+  push: 
+      needs: Upstream-DNS-servers-offload-rules
+      runs-on: ubuntu-22.04
+      steps:
+          - name: 将存储库签出到运行器
+            uses: actions/checkout@v3
+            with:
+                path: push
+
+          - name: 下载上游DNS服务器分流规则
+            uses: actions/download-artifact@v3
+            with:
+                name: Upstream-DNS-servers-offload-rules
+
+          - name: 复制
+            run: |
+                rm -rf ./push/AdGuardHome-dnslist(by cmzj).yaml
+                cp -f AdGuardHome-dnslist(by cmzj).yaml ./push/AdGuardHome-dnslist(by cmzj).yaml
+
+          - name: 推送
+            id: push
+            run: |
+                cd push
+                git config user.name "github-actions[bot]"
+                git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                git add .
+                git commit -m "更新于$(TZ='Asia/Shanghai' date +%Y/%m/%d/%H:%M)" && git push &&  echo "upload=true" >> "$GITHUB_OUTPUT" ||echo "upload=false" >> "$GITHUB_OUTPUT"
+                cat $GITHUB_OUTPUT
+
+        
