@@ -49,8 +49,8 @@ jobs:
 
           - name: 复制
             run: |
-                rm -rf ./push/AdGuardHome-dnslist(by cmzj).yaml
-                cp -f AdGuardHome-dnslist(by cmzj).yaml ./push/AdGuardHome-dnslist(by cmzj).yaml
+                rm -rf "./push/AdGuardHome-dnslist(by cmzj).yaml"
+                cp -f "AdGuardHome-dnslist(by cmzj).yaml" "./push/AdGuardHome-dnslist(by cmzj).yaml"
 
           - name: 推送
             id: push
@@ -59,7 +59,7 @@ jobs:
                 git config user.name "github-actions[bot]"
                 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
                 git add .
-                git commit -m "更新于$(TZ='Asia/Shanghai' date +%Y/%m/%d/%H:%M)" && git push &&  echo "upload=true" >> "$GITHUB_OUTPUT" ||echo "upload=false" >> "$GITHUB_OUTPUT"
+                git commit -m "规则更新于$(TZ='Asia/Shanghai' date +%Y/%m/%d/%H:%M)" && git push &&  echo "upload=true" >> "$GITHUB_OUTPUT" ||echo "upload=false" >> "$GITHUB_OUTPUT"
                 cat $GITHUB_OUTPUT
 
         
