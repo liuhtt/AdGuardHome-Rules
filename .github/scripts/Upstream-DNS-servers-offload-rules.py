@@ -112,6 +112,10 @@ for key, content in content_dict.items():
 print("开始去重")
 China_domain_lists = sorted(list(set(China_domain_lists)))
 Overseas_domain_lists = sorted(list(set(Overseas_domain_lists)))
+
+# 删除列表中的空元素
+China_domain_lists = [item for item in China_domain_lists if item != ""]
+Overseas_domain_lists = [item for item in Overseas_domain_lists if item != ""]
 print("删除Overseas_domain_lists中的China_domain_lists内容")
 Overseas_domain_lists = remove_duplicates(Overseas_domain_lists, China_domain_lists)
 
@@ -121,8 +125,8 @@ for China_domain in China_domain_lists:
     Upstream_DNS_servers_offload_rules = Upstream_DNS_servers_offload_rules + China_domain + '/'
 Upstream_DNS_servers_offload_rules = Upstream_DNS_servers_offload_rules + ']127.0.0.1:6053\n[/'
 
-for Overseas_domai in Overseas_domain_lists:
-    Upstream_DNS_servers_offload_rules = Upstream_DNS_servers_offload_rules + Overseas_domai + '/'
+for Overseas_domain in Overseas_domain_lists:
+    Upstream_DNS_servers_offload_rules = Upstream_DNS_servers_offload_rules + Overseas_domain + '/'
 Upstream_DNS_servers_offload_rules = Upstream_DNS_servers_offload_rules + ']127.0.0.1:5335\n'
 
 open('AdGuardHome-dnslist(by cmzj).yaml', 'w', encoding='utf-8').write(Upstream_DNS_servers_offload_rules)
