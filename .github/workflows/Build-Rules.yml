@@ -24,7 +24,7 @@ jobs:
         run: |
           mkdir -p workdir
           cd workdir
-          python .github/scripts/Upstream-DNS-servers-offload-rules.py
+          python $GITHUB_WORKSPACE/.github/scripts/Upstream-DNS-servers-offload-rules.py
       
       - name: 上传上游DNS服务器分流规则
         if: success() || failure()
